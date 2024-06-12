@@ -21,10 +21,12 @@ Using conda environments:
 
 Using pyenv or venv environments:  
 
-1. Using git bash or your preferred terminal, clone the repository to your local machine.  
+1. Using Git Bash or your preferred terminal, clone the repository to your local machine.  
 2. Navigate to the project directory.
 3. Create a fresh environment (Python==3.10.12 recommended, but not required) using pyenv or venv.
 4. Activate your newly-created environment, and run the following command to install the required packages: `pip install -r requirements.txt`
+
+To prevent you from accidentally pushing Jupyter notebooks to the remote with their outputs on display, open Git Bash in the root directory of your newly-cloned repository and run the following command: `git config --local include.path ../.gitconfig`. You should be good to go after it.
 
 ## Notebook description  
 
