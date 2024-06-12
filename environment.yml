@@ -65,5 +65,4 @@ dependencies:
   - openpyxl
   - shap
   - ipywidgets
-  - pre-commit
 prefix: C:\Users\felix\anaconda3\envs\ards
