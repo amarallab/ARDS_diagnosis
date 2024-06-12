@@ -6,4 +6,4 @@ repos:
         files: \.ipynb$
         stages: [commit]
         language: system
-        entry: jupyter nbconvert --ClearOutputPreprocessor.enabled=True --stdout
+        entry: jupyter nbconvert --ClearOutputPreprocessor.enabled=True --inplace
