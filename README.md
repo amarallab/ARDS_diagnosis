@@ -8,7 +8,7 @@ If you use this work, please cite the paper.
 
 ### Prerequisites  
 
-You need to have Python 3.10.12 installed on your system. You can download Python from the official website. Alternatively, you can use the Anaconda distribution of Python, which includes pip and other useful tools.  
+You need to have Python installed on your system. You can download Python from the official website. Alternatively, you can use the Anaconda distribution of Python, which includes pip and other useful tools.  
 
 ### Installation
 
