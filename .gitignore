@@ -4,5 +4,6 @@ __pycache__/
 *.egg
 *.png
 *.jpg
+*.csv
 
 00_subset_mimiciii.ipynb
