@@ -40,7 +40,6 @@ conda activate ards
 
 #### Using `pyenv` or `venv` environments  
 
-
 3. Create a fresh environment (Python==3.10.12 recommended):  
 
 ```bash
