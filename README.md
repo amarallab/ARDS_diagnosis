@@ -116,6 +116,6 @@ The notebooks will write files to the appropriate folders as they execute.
 ## Running the Notebooks
 
 - For MC1-T1 data: Run `mc1t1`-suffixed notebooks (in order, if the first time).  
-- For MIMIC-III data: Run all `mimicii`-suffixed notebooks (in order, if the first time).  
+- For MIMIC-III data: Run all `mimiciii`-suffixed notebooks (in order, if the first time).  
 
 With this setup, you should be able to fully execute the notebooks and reproduce the results from the paper.
