@@ -1,0 +1,12 @@
+{
+    "objective": "binary:logistic",
+    "eval_metric": "logloss",
+    "base_score": "0.5010134978067985",
+    "n_estimators": "9490",
+    "max_depth": "5480",
+    "learning_rate": "0.07270801175067787",
+    "gamma": "1.6340575711110783",
+    "min_child_weight": "2.953199507031006",
+    "max_delta_step": "70.18898100300574",
+    "subsample": "0.8863965539471701"
+}
