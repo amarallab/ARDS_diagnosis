@@ -72,6 +72,7 @@ git config --local include.path ../.gitconfig
 ## Notebook Description  
 
 Notebooks are numbered to indicate at which data processing step the notebook inserts itself into. The first part of the name indicates the purpose, and the last part indicates the cohort.  
+
 Below is a brief description of each notebook:  
 
 - `01_preprocess_mimiciii.ipynb`: Preprocesses MIMIC (2001-12) dataset (standardizes column names, removes duplicates, etc.).  
@@ -82,6 +83,7 @@ Below is a brief description of each notebook:
   - **Outputs:** These notebooks display encounter counts and a confusion matrix.  
 
 There are also notebooks for reproducing the rest of the figures of the paper. These notebooks were used to develop and evaluate the ML and regex approaches. They are meant to be run after executing `02_segment_hospital_a_2013.ipynb`, hence them starting with `03`. 
+ 
  
  Below is a brief description of each notebook:  
 
