@@ -77,21 +77,26 @@ Below is a brief description of each notebook:
 
 - `01_preprocess_mimiciii.ipynb`: Preprocesses MIMIC (2001-12) dataset (standardizes column names, removes duplicates, etc.).  
   - **Outputs:** Writes CSV files to `Preprocessed_Data/MIMIC_III/labeled_subset`.
-- `02_segment_mimiciii.ipynb` and `02_segment_hospital_a_2013.ipynb`: Segments chest imaging reports and attending physician notes from MIMIC (2001-12) and Hospital A (2013).  
+- `02_segment_mimiciii.ipynb` and `02_segment_hospital_a_2013.ipynb`: Segments chest imaging reports and attending physician notes from MIMIC (2001-12) and Hospital A (2013).
   - **Outputs:** Write CSV files to `Analysis_Data`.  
-- `03_diagnose_mimiciii.ipynb` and `03_diagnose_hospital_a_2013.ipynb`: Implements ARDS' Berlin definition to diagnose encounters from MIMIC (2001-12) and Hospital A (2013). *These notebooks reproduce Figure 9b and 8b, respectively.*
-  - **Outputs:** These notebooks display encounter counts and a confusion matrix.  
+- `03_diagnose_mimiciii.ipynb` and `03_diagnose_hospital_a_2013.ipynb`: Implements ARDS' Berlin definition to diagnose encounters from MIMIC (2001-12) and Hospital A (2013).
+  - **Outputs:** *Figure 9b and 8b, respectively.*  
 
 There are also notebooks for reproducing the rest of the figures of the paper. These notebooks were used to develop and evaluate the ML and regex approaches. They are meant to be run after executing `02_segment_hospital_a_2013.ipynb`, hence them starting with `03`. 
  
  
  Below is a brief description of each notebook:  
 
-- Notebooks with `cxr_hyperparameter_tuning` or `notes_hyperparameter_tuning` find optimal hyperparameters for XGBoost implementations on each dataset. These are used the rest of the notebooks in this folder.  
-- `03_cxr_ml_dev.ipynb`: Performs model selection and model testing for our ML approach to chest imaging reports. *It reproduces Figure 1, 2, 3, S1, S2, and S3*  
-- `03_notes_ml_dev.ipynb`: Performs model selection and model testing for our ML approach to adjudicating risk factors on attending physician notes. *It reproduces Figure 4, 5, and S5*.  
-- `03_notes_regex_dev.ipynb`: Development of our regular expression approach to capture risk factors in attenting physician notes. *It reproduces Figure 6 and Figure S4*.  
-- `03_echo_regex_dev.ipynb`: Development of our regular expression approach to capture parameters of interest in echocardiogram reports. *It reproduces Figure 7*.  
+- Notebooks with `cxr_hyperparameter_tuning` or `notes_hyperparameter_tuning` find optimal hyperparameters for XGBoost implementations on each dataset. These are used the rest of the notebooks in this folder.
+  - **Outputs:** JSON files with optimal XGBoost hyperparameter values, written to a `hyperparameters` folder.
+- `03_cxr_ml_dev.ipynb`: Performs model selection and model testing for our ML approach to chest imaging reports.
+  - **Outputs:** *Figures 1, 2, 3, S1, S2, and S3*.
+- `03_notes_ml_dev.ipynb`: Performs model selection and model testing for our ML approach to adjudicating risk factors on attending physician notes.
+  - **Outputs:** *Figures 4, 5, and S5*.
+- `03_notes_regex_dev.ipynb`: Development of our regular expression approach to capture risk factors in attenting physician notes.
+  - **Outputs:** *Figures 6 and S4*.  
+- `03_echo_regex_dev.ipynb`: Development of our regular expression approach to capture parameters of interest in echocardiogram reports.
+  - **Outputs:** *Figure 7*.  
 
 ## Data Description  
 
