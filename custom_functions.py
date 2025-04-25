@@ -1,7 +1,7 @@
 """
 Functions to do cross validation by encounters, not records
 
-Author: Felix L. Morales
+Author: Félix L. Morales, Luís A. Nunes Amaral
 """
 
 import string
@@ -13,7 +13,6 @@ from sklearn.metrics import (
     precision_recall_curve,
     roc_auc_score,
     log_loss,
-    r2_score,
     average_precision_score
 )
 from sklearn.model_selection import KFold
@@ -485,20 +484,19 @@ def nested_cv(
     else:
         raise ValueError("Invalid scoring scheme, enter either 'auc' or 'brier'")
     
-    # # ROC curve
-    # fpr_test, tpr_test, _ = roc_curve(Y_test, test_preds)
-    # interp_tpr = np.interp(mean_fpr, fpr_test, tpr_test)
-    # interp_tpr[0] = 0.0
+    # ROC curve
+    fpr_test, tpr_test, _ = roc_curve(Y_test, test_preds)
+    interp_tpr = np.interp(mean_fpr, fpr_test, tpr_test)
+    interp_tpr[0] = 0.0
     
-    # AUCPR curve
-    precision_test, recall_test, _ = precision_recall_curve(Y_test, test_preds)
-    interp_tpr = np.interp(mean_fpr, recall_test, precision_test)
-    interp_tpr[0] = 1.0
+    # # AUCPR curve
+    # precision_test, recall_test, _ = precision_recall_curve(Y_test, test_preds)
+    # interp_tpr = np.interp(mean_fpr, recall_test, precision_test)
+    # interp_tpr[0] = 1.0
     
     # Calibration curve
     fop, mpv = calibration_curve(Y_test, test_preds, n_bins=20)
     interp_fop = np.interp(mean_mpv, mpv, fop)
-    r_squared = r2_score(interp_fop, mean_mpv)
     dw = durbin_watson(interp_fop - mean_mpv)
     
     # Importances
@@ -506,7 +504,7 @@ def nested_cv(
     for i, coeff in enumerate(raw_coeffs):
         importances.append({'feature': features[i], 'importance': coeff})
         
-    return test_score, list(test_preds), interp_tpr, interp_fop, r_squared, dw, importances
+    return test_score, list(test_preds), interp_tpr, interp_fop, dw, importances
     
 
 def custom_cv_not_train(

@@ -1,3 +1,9 @@
+"""
+This module provides tools for processing and managing datasets related to ARDS diagnosis. 
+It includes functions for file I/O, table preprocessing, and datetime detection and conversion.
+
+Author(s): Félix L. Morales
+"""
 import os
 import json
 import pandas as pd
@@ -5,29 +11,36 @@ import numpy as np
 
 
 ############################ File I/O #############################
-def _use_system_path_separator(x):
-    """ "
-    Replaces back and forward slashes with file separator used on current
-    operating system.
+def _use_system_path_separator(x: str) -> str:
     """
+    Replaces backslashes ('\\') and forward slashes ('/') in a string
+    with the file separator used on the current operating system.
 
+    Args:
+        x (str): The input string containing file paths.
+
+    Returns:
+        str: The modified string with system-specific path separators.
+    """
     x = x.replace("\\", os.path.sep)
     x = x.replace("/", os.path.sep)
 
     return x
 
 
-def _data_location_pointer():
+def _data_location_pointer() -> dict[str, str]:
     """
-    Obtains a dictionary of paths to datasets from a specific settings file.
-    This settings file needs to be a UTF-8 formatted CSV file,
-    should be at the same filesystem level as the file calling this function,
-    and it should be named 'settings'.
+    Reads a settings file named 'settings.csv' located in the current working directory
+    and returns a dictionary mapping keys to values. The settings file must be a UTF-8
+    formatted CSV file with two columns: 'key' and 'value'.
 
-    Output:
-    settings       dict
+    Returns:
+        dict[str, str]: A dictionary containing key-value pairs from the settings file.
+
+    Raises:
+        EnvironmentError: If the settings directory or file does not exist, or if the
+                          file does not meet the required format or contains duplicate keys.
     """
-
     path_to_settings = os.getcwd()
 
     if not os.path.exists(path_to_settings):
@@ -46,8 +59,8 @@ def _data_location_pointer():
             Could not find settings.csv file:
             {path_to_settings}
 
-            This file needs to be UTF-8 formatted
-            csv file with two columns: key, value
+            This file needs to be a UTF-8 formatted
+            CSV file with two columns: key, value
         """
         )
 
@@ -80,17 +93,21 @@ def _data_location_pointer():
     return settings
 
 
-def get_path(dataset=None, extension=None):
+def get_path(dataset: str = None, extension: str = None) -> str:
     """
-    Returns subfolder containing hospital-specific data.
+    Returns the path to the subfolder containing hospital-specific data.
 
-    Input:
-        dataset     str, name of hospital dataset, e.g.: 'Northwestern Medicine'
-        extension   str, optional, subfolder
-    Output:
-        path        str, folder
+    Args:
+        dataset (str): Name of the hospital dataset, e.g., 'Northwestern Medicine'.
+        extension (str, optional): Subfolder or additional path to append.
+
+    Returns:
+        str: The full path to the specified dataset or subfolder.
+
+    Raises:
+        ValueError: If the constructed path does not exist in the filesystem.
+        KeyError: If the specified dataset is not found in the settings.
     """
-
     if extension is not None:
         extension = _use_system_path_separator(extension)
 
@@ -113,26 +130,33 @@ def get_path(dataset=None, extension=None):
             """
         )
 
-    raise KeyError()
+    raise KeyError(f"Dataset '{dataset}' not found in settings.")
 
 
-def _read_table(table, dataset=None, subfolder=None, columns=None):
+def _read_table(
+    table: str, 
+    dataset: str = None, 
+    subfolder: str = None, 
+    columns: list[str] = None
+) -> pd.DataFrame:
     """
-    Loads tables from a user specified path and set of columns.
-    It attemps to support the same file extensions as pandas' read_excel:
-    `xls`, `xlsx`, `xlsm`, `xlsb`, `odf`, `ods` and `odt`.
-    It can also support reading JSON and CSV files.
+    Loads a table from a user-specified path and set of columns.
+    Attempts to support the same file extensions as pandas' `read_excel`:
+    `xls`, `xlsx`, `xlsm`, `xlsb`, `odf`, `ods`, and `odt`.
+    Also supports reading JSON and CSV files.
 
-    Input:
-    table        Name of table - str
-    dataset      Name of hospital dataset, e.g.: 'Northwestern Medicine' - str
-    subfolder    Specific subfolder within dataset folder - str
-    columns      Names of important columns in the table - list
+    Args:
+        table (str): Name of the table file, including its extension.
+        dataset (str, optional): Name of the hospital dataset, e.g., 'Northwestern Medicine'.
+        subfolder (str, optional): Specific subfolder within the dataset folder.
+        columns (list[str], optional): Names of important columns to load from the table.
 
-    Output:
-    table     pandas dataframe
+    Returns:
+        pd.DataFrame: The loaded table as a pandas DataFrame.
+
+    Raises:
+        ValueError: If the file extension is unsupported or if the dataset is not specified.
     """
-
     if dataset is not None:
         prefix_path = get_path(dataset, subfolder)
         p = os.path.join(prefix_path, table)
@@ -151,8 +175,8 @@ def _read_table(table, dataset=None, subfolder=None, columns=None):
 
         raise ValueError(
             f"""
-            This is your input for table: {table}. It should contain file extension.
-            However, it can only be csv, Excel, JSON files.
+            This is your input for table: {table}. It should contain a file extension.
+            However, it can only be CSV, Excel, or JSON files.
             """
         )
 
@@ -160,17 +184,38 @@ def _read_table(table, dataset=None, subfolder=None, columns=None):
         raise ValueError("Must specify a dataset or hospital name")
 
 
-def read_in_files():
+def read_in_files() -> tuple[
+    pd.DataFrame | None,
+    pd.DataFrame,
+    pd.DataFrame | None,
+    pd.DataFrame,
+    pd.DataFrame,
+    pd.DataFrame,
+    pd.DataFrame,
+    dict[str, str],
+]:  
     """
-    This is the main file I/O routine for stitching datasets for ARDS diagnosis.
-    It prompts the user to specify which dataset to read.
-    The function will read in a specs file that should be in the root directory
-    of the dataset in question. This file consists of key/value pairs which specify
-    file names, columns of interest, and whether files are within subfolders.
+    Main file I/O routine for loading datasets for ARDS diagnosis.
 
-    returns - all relevant tables, as pandas dataframes
-            - specs, as dict
-    """
+    This function prompts the user to specify a dataset to read. It reads a "specs" file
+    located in the root directory of the dataset, which contains key-value pairs specifying
+    file names, columns of interest, and subfolder locations for various tables.
+
+    Returns:
+        tuple:
+            - dictionary (pd.DataFrame | None): Dictionary table, if specified in the specs file.
+            - pf (pd.DataFrame): PF ratios table.
+            - peep (pd.DataFrame | None): PEEP table, if specified in the specs file.
+            - bi (pd.DataFrame): Chest X-ray (CXR) reports table.
+            - notes (pd.DataFrame): Attending physician notes table.
+            - echo (pd.DataFrame): Echocardiography reports table.
+            - bnp (pd.DataFrame): Brain/Beta Natriuretic Peptide lab values table.
+            - specs (dict[str, str]): Specifications dictionary containing key-value pairs from the specs file.
+
+    Raises:
+        KeyError: If the specified dataset is not found in the settings file.
+        EnvironmentError: If the specs file is missing or improperly formatted.
+    """ 
 
     print(
         """
@@ -568,28 +613,60 @@ def read_in_files():
 
 ################## Table pre-processing ####################################
 def preprocess_tables(
-    dictionary, pf_ratios, peep, cxr_reports, attn_notes, echo_reports, bnp_values
-):
+    dictionary: pd.DataFrame | None,
+    pf_ratios: pd.DataFrame,
+    peep: pd.DataFrame | None,
+    cxr_reports: pd.DataFrame,
+    attn_notes: pd.DataFrame,
+    echo_reports: pd.DataFrame,
+    bnp_values: pd.DataFrame,
+) -> tuple[
+    pd.DataFrame | None,
+    pd.DataFrame,
+    pd.DataFrame | None,
+    pd.DataFrame,
+    pd.DataFrame,
+    pd.DataFrame,
+    pd.DataFrame,
+]:
     """
-    Function to perform general preprocessing routines:
-    - Standardize value/report column names and corresponding timestamp columns
-    - Drop duplicate rows
-    - Drop rows where value/report, and corresponding timestamp, are both absent (or NULL)
-    - If present, merge the dictionary file.
-    - Sort by encounter or patient ID, and then by value/report timestamp
+    Perform general preprocessing routines on the provided tables.
 
-    This function will not rename encounter or patient IDs, and hospitalization/ICU dates,
-    as these will be assumed to have the same column names accross tables.
-    If that's not the case, manually correct for this.
+    This function performs the following tasks:
+    - Standardizes value/report column names and corresponding timestamp columns.
+    - Drops duplicate rows.
+    - Drops rows where value/report and corresponding timestamp are both absent (or NULL).
+    - If present, merges the dictionary file with other tables.
+    - Sorts tables by encounter or patient ID, and then by value/report timestamp.
+
+    Note:
+    - This function assumes that encounter or patient IDs, and hospitalization/ICU dates,
+      have the same column names across tables. If not, manually correct for this before calling the function.
+
+    Args:
+        dictionary (pd.DataFrame | None): Dictionary table, if available.
+        pf_ratios (pd.DataFrame): PF ratios table.
+        peep (pd.DataFrame | None): PEEP table, if available.
+        cxr_reports (pd.DataFrame): Chest X-ray (CXR) reports table.
+        attn_notes (pd.DataFrame): Attending physician notes table.
+        echo_reports (pd.DataFrame): Echocardiography reports table.
+        bnp_values (pd.DataFrame): Brain/Beta Natriuretic Peptide lab values table.
 
     Returns:
-    pf_ratios, peep, cxr_reports, attn_notes, echo, bnp_values - pandas dataframes
+        tuple:
+            - dictionary (pd.DataFrame | None): Processed dictionary table.
+            - pf_ratios (pd.DataFrame): Processed PF ratios table.
+            - peep (pd.DataFrame | None): Processed PEEP table.
+            - cxr_reports (pd.DataFrame): Processed CXR reports table.
+            - attn_notes (pd.DataFrame): Processed attending physician notes table.
+            - echo_reports (pd.DataFrame): Processed echocardiography reports table.
+            - bnp_values (pd.DataFrame): Processed BNP lab values table.
     """
 
     while True:
         try:
             dataset = input(
-                "Again, what's your dataset? I have mild computer amnesia...  "
+                "Again, what's your dataset? I have mild dissociative Computer amnesia (F44.0C)  "
             )
             get_path(dataset=dataset)
         except KeyError:
@@ -1594,29 +1671,38 @@ def preprocess_tables(
     )
 
 
-def detect_datetime_and_convert(df, columns_returned="all"):
+def detect_datetime_and_convert(
+    df: pd.DataFrame, columns_returned: str = "all"
+) -> pd.DataFrame:
     """
-    Infers which columns in pandas dataframe contain date or datetime entries,
-    converts them, and returns a pandas dataframe specified by user.
+    Detects columns in a pandas DataFrame that contain date or datetime entries,
+    converts them to datetime format, and returns the DataFrame based on the specified option.
 
-    df - pandas dataframe of interest
-    columns_returned - Whether to return the entire converted dataframe, or a subset
-        'all' - Default. Return the entire dataframe with converted columns
-        'datetime' - Return just the converted columns
-        'no_datetime' - Return dataframe without converted columns
+    Args:
+        df (pd.DataFrame): The pandas DataFrame to process.
+        columns_returned (str): Specifies the type of DataFrame to return:
+            - 'all': (default) Returns the entire DataFrame with converted datetime columns.
+            - 'datetime': Returns only the columns that were converted to datetime.
+            - 'no_datetime': Returns the DataFrame without the converted datetime columns.
+
+    Returns:
+        pd.DataFrame: The processed DataFrame based on the `columns_returned` parameter.
+
+    Raises:
+        ValueError: If `columns_returned` is not one of 'all', 'datetime', or 'no_datetime'.
     """
 
     # Captures various date formats using a dash (-) to separate
     mask1 = df.astype(str).apply(
         lambda x: x.str.fullmatch(
-            r"(?<!\S)\d{1,4}-\d{1,2}-\d{2,4}(\s*\d{0,2}\:\d{0,2}\:\d{0,2}|\s*\d{0,2}\:\d{0,2}|)(?!\S)"
+            r"(?<!\S)\d{1,4}-\d{1,2}-\d{2,4}(\s*\d{0,2}:\d{0,2}:\d{0,2}|\s*\d{0,2}:\d{0,2}|)(?!\S)"
         ).any()
     )
 
     # Captures various date formats using a slash (/) to separate
     mask2 = df.astype(str).apply(
         lambda x: x.str.fullmatch(
-            r"(?<!\notes1S)\d{1,4}\/\d{1,2}\/\d{2,4}(\s*\d{0,2}\:\d{0,2}\:\d{0,2}|\s*\d{0,2}\:\d{0,2}|)(?!\S)"
+            r"(?<!\S)\d{1,4}/\d{1,2}/\d{2,4}(\s*\d{0,2}:\d{0,2}:\d{0,2}|\s*\d{0,2}:\d{0,2}|)(?!\S)"
         ).any()
     )
 
@@ -1634,5 +1720,5 @@ def detect_datetime_and_convert(df, columns_returned="all"):
         return df.loc[:, ~mask]
 
     raise ValueError(
-        "columns_returned parameter invalid. Pass one of 'all', 'datetime', or 'no_datetime'"
-        )
+        "columns_returned parameter invalid. Pass one of 'all', 'datetime', or 'no_datetime'."
+    )

@@ -40,10 +40,10 @@ conda activate ards
 
 #### Using `pyenv` or `venv` environments  
 
-3. Create a fresh environment (Python==3.10.12 recommended):  
+3. Create a fresh environment (Python==3.11.12 recommended):  
 
 ```bash
-pyenv virtualenv 3.10.12 [name_of_env]  # For pyenv
+pyenv virtualenv 3.11.12 [name_of_env]  # For pyenv
 python -m venv [name_of_env]  # For venv
 ```
 
@@ -80,7 +80,9 @@ Below is a brief description of each notebook:
 - `02_segment_mimiciii.ipynb` and `02_segment_hospital_a_2013.ipynb`: Segments chest imaging reports and attending physician notes from MIMIC (2001-12) and Hospital A (2013).
   - **Outputs:** Write CSV files to `Analysis_Data`.  
 - `03_diagnose_mimiciii.ipynb` and `03_diagnose_hospital_a_2013.ipynb`: Implements ARDS' Berlin definition to diagnose encounters from MIMIC (2001-12) and Hospital A (2013).
-  - **Outputs:** *Figure 9b and 8b, respectively.*  
+  - **Outputs:** *Figure 8b and 7b, respectively; Table 2 and Table 1, respectively. And the MIMIC-III notebook generates Figure S8*  
+- `03_diagnose_mimiciii_cutoffs.ipynb` and `03_diagnose_hospital_a_2013_cutoffs.ipynb`: Explores different probability thresholds for ML models.
+  - **Outputs:** *Table S6 and S5, respectively.* 
 
 There are also notebooks for reproducing the rest of the figures of the paper. These notebooks were used to develop and evaluate the ML and regex approaches. They are meant to be run after executing `02_segment_hospital_a_2013.ipynb`, hence them starting with `03`. 
  
@@ -90,13 +92,13 @@ There are also notebooks for reproducing the rest of the figures of the paper. T
 - Notebooks with `cxr_hyperparameter_tuning` or `notes_hyperparameter_tuning` find optimal hyperparameters for XGBoost implementations on each dataset. These are used the rest of the notebooks in this folder.
   - **Outputs:** JSON files with optimal XGBoost hyperparameter values, written to a `hyperparameters` folder.
 - `03_cxr_ml_dev.ipynb`: Performs model selection and model testing for our ML approach to chest imaging reports.
-  - **Outputs:** *Figures 1, 2, 3, S1, S2, and S3*.
+  - **Outputs:** *Figures 1, 2, 3, S2, S3, and S4. Table S5*.
 - `03_notes_ml_dev.ipynb`: Performs model selection and model testing for our ML approach to adjudicating risk factors on attending physician notes.
-  - **Outputs:** *Figures 4, 5, and S5*.
+  - **Outputs:** *Figures 4 and 5. Table S3*.
 - `03_notes_regex_dev.ipynb`: Development of our regular expression approach to capture risk factors in attenting physician notes.
-  - **Outputs:** *Figures 6 and S4*.  
+  - **Outputs:** *Figures 6, S5, and S6*.  
 - `03_echo_regex_dev.ipynb`: Development of our regular expression approach to capture parameters of interest in echocardiogram reports.
-  - **Outputs:** *Figure 7*.  
+  - **Outputs:** *Figure S7*.  
 
 ## Data Description  
 

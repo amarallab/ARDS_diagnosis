@@ -1,1 +1,1 @@
-{"base_score": "0.73726683215447", "n_estimators": "5840", "max_depth": "5670", "learning_rate": "0.5075599931067811", "gamma": "5.478870348450969", "min_child_weight": "7.3334743611685225", "max_delta_step": "85.39349352691448", "subsample": "0.8935354609846595"}
+{"base_score": "0.36365583603962603", "n_estimators": "4620", "max_depth": "7490", "learning_rate": "0.14411247686302658", "gamma": "4.677671382767051", "min_child_weight": "2.634283823247739", "max_delta_step": "81.90653650067802", "subsample": "0.6304130419085514"}

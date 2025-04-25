@@ -1,21 +1,30 @@
+"""
+This module provides a collection of utility functions for processing and cleaning text data, 
+specifically tailored for medical reports such as chest X-ray reports and notes.
+The functions include text normalization, section removal, stopword elimination, stemming,
+and extraction of contextual information around specific risk factors.
+These tools are designed to facilitate the preprocessing of medical text data for downstream
+tasks such as machine learning and natural language processing.
+
+Author(s): Luís A. Nunes Amaral, Félix L. Morales
+"""
 import re
 from operator import itemgetter
 from pathlib import Path
 
 
-def process_times(note, pattern):
+def process_times(note: str, pattern: str) -> str:
     """
-    Look for presence of times, in 12h clock or 24h clock,
-    using a regular expression pattern and replace by format aahbb
+    Look for the presence of times in a given text, either in 12-hour or 24-hour clock format,
+    using a regular expression pattern, and replace them with the format "aahbb".
 
-    inputs:
-        note -- string with cxr report
-        pattern -- re string
+    Args:
+        note (str): The input string containing the text to process.
+        pattern (str): The regular expression pattern to match time formats.
 
-    outputs:
-        note -- string with cxr report
+    Returns:
+        str: The processed string with times replaced by the "aahbb" format.
     """
-
     while True:
         match = re.search(pattern, note)
         if not match:
@@ -36,15 +45,15 @@ def process_times(note, pattern):
     return note
 
 
-def clean_up_string(text):
+def clean_up_string(text: str) -> str:
     """
-    Clean up some issues with text (missing spaces, commas, and so on)
+    Cleans up issues in a given text, such as missing spaces, commas, and formatting inconsistencies.
 
-    Input:
-        text -- string with cxr report
+    Args:
+        text (str): The input string containing the text to clean.
 
-    Output:
-        note -- cleaned up text
+    Returns:
+        str: The cleaned and formatted text.
     """
 
     note = text.lower()
@@ -59,7 +68,7 @@ def clean_up_string(text):
     pattern_24h = r"((2[0-3])|(1\d)|((0|\s)\d)):[0-5]\d\s*"
     note = process_times(note, pattern_24h)
 
-    # Add a space after a colon, remove parenthesis an brackets, and
+    # Add a space after a colon, remove parenthesis and brackets, and
     # replace / by a single space
     note = note.replace(":", ": ")
     note = note.replace(";", ". ")
@@ -105,18 +114,19 @@ def clean_up_string(text):
     return note
 
 
-def remove_easy_sections(report, section_order, verbose=False):
+def remove_easy_sections(report: str, section_order: list[tuple[str, bool]], verbose: bool = False) -> str:
     """
-    Find section names in report by looking for terms followed by colon and remove target_sections
-    from text.
+    Removes specified sections from a chest X-ray report based on section names followed by a colon.
 
-    Input:
-        report -- string with cxr report
-        section_order -- list of tuples with section name and Boolean about keeping it or not
-        verbose -- boolean to activate printing, default is False
+    Args:
+        report (str): The input string containing the chest X-ray report.
+        section_order (list[tuple[str, bool]]): A list of tuples where each tuple contains a section name (str) 
+                                                and a boolean indicating whether to keep (True) or remove (False) 
+                                                the section.
+        verbose (bool, optional): If True, prints debug information. Defaults to False.
 
-    Output:
-        note -- string with processed cxr report
+    Returns:
+        str: The processed chest X-ray report with specified sections removed.
     """
 
     note = clean_up_string(report)
@@ -176,17 +186,17 @@ def remove_easy_sections(report, section_order, verbose=False):
     return note
 
 
-def handle_subsection_titles(report):
+def handle_subsection_titles(report: str) -> list[str]:
     """
-    Find lines with subsection titles, split them, and connect them
+    Processes a chest X-ray report to identify lines with subsection titles,
+    splits them at colons, and reconnects the parts into a structured format.
 
-    Input:
-        report -- string with cxr report
+    Args:
+        report (str): A string containing the chest X-ray report.
 
-    Output:
-        new_report -- list of strings
+    Returns:
+        list[str]: A list of strings where subsection titles are split and formatted.
     """
-
     new_report = []
 
     for line in report:
@@ -201,24 +211,22 @@ def handle_subsection_titles(report):
     return new_report
 
 
-def remove_lines_on_other_organs(report, exclusion_set):
+def remove_lines_on_other_organs(report: list[str], exclusion_set: set[str]) -> list[str]:
     """
-    Find statements with mentions of terms indicative of organs other than lungs
+    Removes statements from a report that mention terms indicative of organs other than lungs.
 
-    Input:
-        report -- list of statements (strings)
-        excluded_set -- list of strings
+    Args:
+        report (list[str]): A list of statements (strings) from the report.
+        exclusion_set (set[str]): A set of terms to exclude, representing organs other than lungs.
 
-    Output:
-        new_report -- list of strings
+    Returns:
+        list[str]: A new list of statements with excluded terms removed.
     """
-
     new_report = []
 
     for line in report:
         if ":" in line:
             new_report.append(line)
-
         else:
             if not exclusion_set.intersection(set(line.split())):
                 new_report.append(line)
@@ -226,18 +234,20 @@ def remove_lines_on_other_organs(report, exclusion_set):
     return new_report
 
 
-def curate_indicator_word_list(filename, targeted_stemming, verbose=False):
+def curate_indicator_word_list(
+    filename: str, targeted_stemming: dict[str, str], verbose: bool = False
+) -> list[str]:
     """
-    Reads in a file containing raw indicator words of bilateral
-    infiltrates in chest X-rays, and processes them to return
-    a clean list if such words.
+    Reads a file containing raw indicator words of bilateral infiltrates in chest X-rays,
+    processes them, and returns a cleaned and stemmed list of such words.
 
-    Input:
-        - filename: str, name of the file containing raw words
-        - targeted_stemming: dict, specific key:value pairs for stemming
+    Args:
+        filename (str): The name of the file (without extension) containing raw indicator words.
+        targeted_stemming (dict[str, str]): A dictionary with specific key-value pairs for stemming.
+        verbose (bool, optional): If True, prints debug information. Defaults to False.
 
     Returns:
-        - indicator_words: list of str, cleaned/stemmed indicator words
+        list[str]: A sorted list of cleaned and stemmed indicator words.
     """
 
     filepath = Path("./") / "src" / f"{filename}.txt"
@@ -253,7 +263,6 @@ def curate_indicator_word_list(filename, targeted_stemming, verbose=False):
     # Stem words in indicator tuples
     clean_indicators = []
     for item in indicators:
-
         for j, word in enumerate(item):
             if word in targeted_stemming.keys():
                 item[j] = targeted_stemming[word]
@@ -292,19 +301,18 @@ def curate_indicator_word_list(filename, targeted_stemming, verbose=False):
     return indicator_words
 
 
-def stem_indicator_words(report, targeted_stemming):
+def stem_indicator_words(report: list[str], targeted_stemming: dict[str, str]) -> list[str]:
     """
-    Find indicator words in statements and stem them
+    Stems indicator words in the given report based on a targeted stemming dictionary.
 
-    Input:
-        report -- list of strings
-        indicator_words -- list of strings
-        targeted_stemming -- dictionary with stemming replacements
+    Args:
+        report (list[str]): A list of strings representing the report.
+        targeted_stemming (dict[str, str]): A dictionary where keys are words to be stemmed 
+                                            and values are their stemmed replacements.
 
-    Output:
-        new_report -- list of strings
+    Returns:
+        list[str]: A new list of strings with indicator words stemmed according to the dictionary.
     """
-
     new_report = []
 
     for line in report:
@@ -320,25 +328,25 @@ def stem_indicator_words(report, targeted_stemming):
     return new_report
 
 
-def remove_stopwords(report, complex_stopwords, simple_stopwords):
+def remove_stopwords(
+    report: list[str], complex_stopwords: list[str], simple_stopwords: list[str]
+) -> list[str]:
     """
-    Find both complex and simple stopwords in statements and remove them
+    Removes both complex and simple stopwords from the given report.
 
-    Input:
-        report -- list of strings
-        complex_stopwords -- list of strings
-        simple_stopwords -- list of string
+    Args:
+        report (list[str]): A list of strings representing the report.
+        complex_stopwords (list[str]): A list of phrases or substrings to be removed from the report.
+        simple_stopwords (list[str]): A list of individual words to be removed from the report.
 
-    Output:
-        new_report -- list of string
+    Returns:
+        list[str]: A new list of strings with stopwords removed.
     """
-
     new_report = []
 
     for line in report:
         if ":" in line:
             new_report.append(line)
-
         else:
             for snippet in complex_stopwords:
                 if snippet in line:
@@ -351,17 +359,16 @@ def remove_stopwords(report, complex_stopwords, simple_stopwords):
     return new_report
 
 
-def remove_sections_n_duplicate_lines(report):
+def remove_sections_n_duplicate_lines(report: list[str]) -> list[str]:
     """
-    Find duplicate statements and section titles and remove them
+    Removes duplicate statements and section titles from a report.
 
-    Input:
-        report -- list of strings
+    Args:
+        report (list[str]): A list of strings representing the report.
 
-    Output:
-        new_report -- list of string
+    Returns:
+        list[str]: A new list of strings with duplicates and section titles removed.
     """
-
     new_report = []
 
     for line in report:
@@ -371,31 +378,27 @@ def remove_sections_n_duplicate_lines(report):
     return new_report
 
 
-def refine_cleaning(report, useless_statements):
+def refine_cleaning(report: list[str], useless_statements: list[str]) -> list[str]:
     """
-    Find useless and numeric statements; remove them
+    Removes useless and numeric statements from a report.
 
-    Input:
-        report -- list of strings
-        useless_statements -- list of strings
+    Args:
+        report (list[str]): A list of strings representing the report.
+        useless_statements (list[str]): A list of strings considered useless and to be removed.
 
-    Output:
-        new_report -- list of string
+    Returns:
+        list[str]: A new list of strings with useless and numeric statements removed.
     """
-
     new_report = []
 
     for line in report:
         logic = False
         if not line.isnumeric():
-
-            # Check if at least one useless_statements is equal to line.
-            # If so, set line for removal
+            # Check if at least one useless statement matches the line.
             for item in useless_statements:
                 if line.strip() == item.strip():
                     logic = True
                     break
-
         else:
             logic = True
 
@@ -405,72 +408,82 @@ def refine_cleaning(report, useless_statements):
     return new_report
 
 
-def remove_dictation(report, dictation_string, verbose=False):
+def remove_dictation(report: list[str], dictation_string: str, verbose: bool = False) -> list[str]:
     """
-    Find dictation line and remove
+    Removes lines from a report that start with a specified dictation string.
 
-    Input:
-        report -- list of strings
+    Args:
+        report (list[str]): A list of strings representing the report.
+        dictation_string (str): The string to check at the start of each line.
+        verbose (bool, optional): If True, prints debug information. Defaults to False.
 
-    Output:
-        new_report -- list of string
+    Returns:
+        list[str]: A new list of strings with lines starting with the dictation string removed.
     """
     new_report = []
 
     for line in report:
         if line.startswith(dictation_string):
             if verbose:
-                print("starts with")
+                print("Line starts with the dictation string.")
         else:
             if verbose:
-                print("doesn")
+                print("Line does not start with the dictation string.")
             new_report.append(line)
 
     return new_report
 
 
 def extract_surroundings_of_risk_factor_and_process(
-    risk_factor_label, text_field=None, add_column_name=None, verbose=False
-):
+    risk_factor_label: list[dict],
+    text_field: str = None,
+    add_column_name: str = None,
+    verbose: bool = False,
+) -> None:
     """
-    Matches key words from risk factors,
-    and adds a column with words surrounding the risk factor mention.
+    Extracts and processes text surrounding mentions of specified risk factors in a dataset.
 
-    Inputs:
-    - risk_factor_label: list of dict, notes data with flags
+    Args:
+        risk_factor_label (list[dict]): A list of dictionaries containing notes data with flags
                                         for a given risk factor.
-    - text_field: str, specify name of column/field having the note.
-    - add_column_name: str, specify risk factor name for naming new column.
-                            name will follow pattern: "seg_{add_column_name}"
+        text_field (str): The name of the column/field containing the note text.
+        add_column_name (str): The risk factor name used for naming the new column.
+                               The new column will follow the pattern: "seg_{add_column_name}".
+        verbose (bool, optional): If True, prints debug information. Defaults to False.
+
+    Returns:
+        None: The function modifies the input `risk_factor_label` in place by adding a new column
+              with the extracted and processed text surrounding the risk factor mentions.
     """
 
-    # patterns to search for
+    # TODO: Send these to a file
+    # Patterns to search for
     patterns = {
-        "pneumonia_pattern": r"(?<!\w)(?:PCPpneumonia|pneumonia|Pneumonia|PNEUMONIA|pneumoniae|pneunonia|pneunoniae|pnuemonia|bronchopneumonia|parapneumonic|PNA|CAP|VAP|HAP|HCAP|hcap|infection|abx|PCP)(?!\w)",
-        "aspiration_pattern": r"(?i)(?<!\w)aspiration(?!\w)",
-        "inhalation_pattern": r"(?i)(?<!\w)(?:inhaled|inhalation)(?!\w)",
-        "pulm_contusion_pattern": r"(?i)(?<!\w)(?:pulmonary |pulmoanry )(?:contusion|contusions)(?!\w)",
-        "vasculitis_pattern": r"(?i)(?<!\w)(?:pulmonary vasculitis|vasculitis)(?!\w)",
-        "drowning_pattern": r"(?i)(?<!\w)(?:drowned|drowning)(?!\w)",
-        "sepsis_pattern": r"(?i)(?<!\w)(?:sepsis|urosepsis|septiuc|septic|ssepsis|sseptic|spetic)(?!\w)",
-        "shock_pattern": r"(?i)(?<!\w)(?:shock|shocks|schock)(?!\w)",
-        "overdose_pattern": r"(?i)(?<!\w)(?:overdose|drug overdose)(?!\w)",
-        "trauma_pattern": r"(?i)(?<!\w)(?<!OGT\s)(?:trauma|traumatic|barotrauma|barotraumatic)(?!\w)",
-        "pancreatitis_pattern": r"(?i)(?<!\w)pancreatitis(?!\w)",
-        "burn_pattern": r"(?i)(?<!\w)(?:burn|burns)(?!\w)",
-        "trali_pattern": r"(?<!\w)(?:TRALI|(?i)transfusion(?:-|\s)related acute lung injury|(?i)transfusion(?:-|\s)associated acute lung injury)(?!\w)",
-        "ards_pattern": r"(?i)(?<!\w)(?:ards|acute respiratory distress syndrome|acute lung injury|ali|ardsnet|acute hypoxemic respiratory failure)(?!\w)",
-        "pregnant_pattern": r"(?i)(?<!\w)(?:IUP|G\dP\d)(?!\w)",
-        "chf_pattern": r"(?i)(?<!\w)(?:congestive heart failure|chf|diastolic HF|systolic HF|heart failure|diastolic dysfunction|LV dysfunction|low cardiac output syndrome|low cardiac ouput syndrome|low CO state)(?!\w)",
-        "cardiogenic_pattern": r"(?i)(?<!\w)(?<!non\s)(?<!non-)(?:cardiogenic|cardigenic|cardiogemic|cardiac pulmonary edema|cardiac and septic shock|Shock.{1,15}suspect.{1,15}RV failure)(?!\w)",
-        "non_cardiogenic_pattern": r"(?i)(?<!\w)(?:non(?:-|\s)cardiogenic|noncardiogenic|non(?:-|\s)cardigenic|noncardigenic)(?!\w)",
-        "palliative_pattern": r"(?i)(?<!\w)(?:palliative care|comfort care|withdraw care|comfort alone|withdraw support in favor of palliation)(?!\w)",
-        "cardiac_arrest_pattern": r"(?i)(?<!\w)(?:arrest|cardiorespiratory arrest)(?!\w)",
-        "dementia_pattern": r"(?i)(?<!\w)dementia(?!\w)",
-        "stroke_pattern": r"(?i)(?<!\w)(?:stroke|strokes|cerebellar hemorrhage|intracerebral hemorrhage|BG hemorrhage|cva|cerebrovascular accident|cefrebellar infarcts\/basilar stenosis)(?!\w)",
-        "alcohol_pattern": r"(?i)(?<!\w)(?:alcohol withdrawal|dts|dt''s|dt|alcohol dependence|alcohol abuse|etoh abuse|etoh withdrawal|etoh withdrawl|etoh w\/drawal|delirium tremens)(?!\w)",
-        "seizure_pattern": r"(?i)(?<!\w)(?<!no e/o subclinical\s)(?<!no e/o subclinical )(?:seizure|seizures)(?!\w)",
-        "ami_pattern": r"(?i)(?<!\w)(?:ami|acute myocardial ischemia|acute myocardial infarction|myocardial infarction|nstemi|non-st elevation mi|stemi|st elevation mi|acute mi)(?!\w)",
+        'pneumonia': r"(?<!\w)(?:PCPpneumonia|pneumonia|Pneumonia|PNEUMONIA|pneumoniae|pneunonia|pneunoniae|pnuemonia|bronchopneumonia|parapneumonic|PNA|CAP|VAP|HAP|HCAP|hcap|infection|abx|PCP)(?!\w)",
+        'aspiration': r"(?i)(?<!\w)(?<!possibility\sof\s)(?<!\(\?)(?<!no\s{4}e\/o\s)(?<!unclear\sif\sthis\sis\s)(?<!cannot\srule\sout\s)(?<!risk\sfor\s)(?<!risk\sof\s)(?<!\?\s)(?<!cover\sfor\s)(?<!no\switnessed\s)(?:aspiration|aspirating)(?!\svs)(?!\svs.)(?!\?)(?!\ss\/p\sR\smainstem\sintubation)(?!\sprecautions)(?!\sand\sdrainage)(?!\w)",
+        'inhalation': r"(?i)(?<!\w)(?:inhaled|inhalation)(?!\w)",
+        'pulm_contusion': r"(?i)(?<!\w)(?:pulmonary|pulmoanry)\s+(?:contusion|contusions)(?!\w)",
+        'vasculitis': r"(?i)(?<!\w)(?<!\?\s)(?<!less\slikely\s)(?:pulmonary\svasculitis|vasculitis)(?!\slabs)(?!\sworkup)(?!\sand\scarcinomatosis\sis\sless\slikely)(?!\shighly\sunlikely)(?!\sless\slikely)(?!\w)",
+        'drowning': r"(?i)(?<!\w)(?:drowned|drowning)(?!\w)",
+        'sepsis': r"(?i)(?<!\w)(?:sepsis|urosepsis|septiuc|septic|ssepsis|sseptic|spetic)(?!\w)",
+        'shock': r"(?i)(?<!\w)(?:shock|shocks|schock)(?!\w)",
+        'overdose': r"(?i)(?<!\w)(?:overdose|drug\soverdose)(?!\w)",
+        'trauma': r"(?i)(?<!\w)(?<!OGT\s)(?:trauma|traumatic|barotrauma|barotraumatic)(?!\w)",
+        'pancreatitis': r"(?i)(?<!\w)pancreatitis(?!\w)",
+        'burn' : r"(?i)(?<!\w)(?:burn|burns)(?!\w)",
+        'trali': r"(?<!\w)(?:TRALI|transfusion(?:-|\s)related\sacute\slung\sinjury|transfusion(?:-|\s)associated\sacute\slung\sinjury)(?!\w)",
+        'ards': r"(?i)(?<!\w)(?:ards|acute\srespiratory\sdistress\ssyndrome|acute\slung\sinjury|ali|ardsnet|acute\shypoxemic\srespiratory\sfailure)(?!\w)",
+        'pregnant': r"(?i)(?<!\w)(?:IUP|G\dP\d)(?!\w)",
+        'chf': r"(?i)(?<!\w)(?<!h\/o\s)(?:congestive\sheart\sfailure|chf|diastolic\sHF|systolic\sHF|heart\sfailure|diastolic\sdysfunction|LV\sdysfunction|low\scardiac\soutput\ssyndrome|low\scardiac\soutput\ssyndrom|low\scardiac\souput\ssyndrome|low\sCO\sstate)(?!\swith\spreserved\sef)(?!\swas\sanother\spossible\sexplan)(?!\w)",
+        'cardiogenic': r"(?i)(?<!\w)(?<!no\se\/o\sobstructive\sor\s)(?<!versus\s)(?<!rule\sout\s)(?<!ruled\sout\s)(?<!less\slikley\s)(?<!w\/o\sevidence\ssuggestive\sof\s\s)(?<!non\s)(?<!less\slikely\s)(?<!not\slikely\s)(?<!unlikely\sto\sbe\s)(?<!no\sclear\sevidence\sof\sacute\s)(?<!non-)(?<!than\s)(?<!no\sevidence\sof\s)(?:cardiogenic|cardigenic|cardiogemic|cardiac\spulmonary\sedema|cardiac\sand\sseptic\sshock|Shock.{1,15}suspect.{1,15}RV\sfailure)(?!\s\(not\slikely\sgiven\sECHO\sresults\))(?!\sshock\sunlikely)(?!\svs\.\sseptic)(?!\scomponent\salthough\sSvO2\snormal)(?!\w)",
+        'non_cardiogenic': r"(?i)(?<!\w)(?:non(?:-|\s)cardiogenic|noncardiogenic|non(?:-|\s)cardigenic|noncardigenic)(?!\w)",
+        'palliative': r"(?i)(?<!\w)(?:palliative\scare|comfort\scare|withdraw\scare|comfort\salone|withdraw\ssupport\sin\sfavor\sof\spalliation)(?!\w)",
+        'cardiac_arrest': r"(?i)(?<!\w)(?:arrest|cardiorespiratory\sarrest)(?!\w)",
+        'dementia': r"(?i)(?<!\w)dementia(?!\w)",
+        'stroke': r"(?i)(?<!\w)(?:stroke|strokes|cerebellar\shemorrhage|intracerebral\shemorrhage|BG\shemorrhage|cva|cerebrovascular\saccident|cefrebellar\sinfarcts\/basilar\sstenosis)(?!\w)",
+        'alcohol': r"(?i)(?<!\w)(?:alcohol\swithdrawal|dts|dt''s|dt|alcohol\sdependence|alcohol\sabuse|etoh\sabuse|etoh\swithdrawal|etoh\swithdrawl|etoh\sw\/drawal|delirium\stremens)(?!\w)",
+        'seizure': r"(?i)(?<!\w)(?<!no\se/o\ssubclinical\s)(?<!no\se/o\ssubclinical\s)(?:seizure|seizures)(?!\w)",
+        'ami': r"(?i)(?<!\w)(?:ami|acute\smyocardial\sischemia|acute\smyocardial\sinfarction|myocardial\sinfarction|nstemi|non-st\selevation\smi|stemi|st\selevation\smi|acute\smi)(?!\w)"
     }
 
     # Modify this variable to control how big of a section to extract surrounding a risk factor.

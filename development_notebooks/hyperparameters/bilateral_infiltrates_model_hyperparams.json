@@ -1,12 +1,1 @@
-{
-    "objective": "binary:logistic",
-    "eval_metric": "logloss",
-    "base_score": "0.5010134978067985",
-    "n_estimators": "9490",
-    "max_depth": "5480",
-    "learning_rate": "0.07270801175067787",
-    "gamma": "1.6340575711110783",
-    "min_child_weight": "2.953199507031006",
-    "max_delta_step": "70.18898100300574",
-    "subsample": "0.8863965539471701"
-}
+{"objective": "binary:logistic", "eval_metric": "logloss", "base_score": "0.7167289690210048", "n_estimators": "2630", "max_depth": "4920", "learning_rate": "0.009683178650151947", "gamma": "2.9605416182586106", "min_child_weight": "2.9455341328365767", "max_delta_step": "54.82376111952027", "subsample": "0.612365892706759"}
