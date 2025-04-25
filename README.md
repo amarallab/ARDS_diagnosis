@@ -123,6 +123,7 @@ To run these notebooks, download the [Hospital A (2013) dataset](https://arch.li
 ├───Raw_Data
 │   └───MIMIC_III
 │       ├───labeled_subset
+|       ├───mimic_characteristics
 ```  
 
 - Place the Hospital A (2013) dataset in `Anonymized_Data/hospital_a_2013`.  
