@@ -102,7 +102,7 @@ There are also notebooks for reproducing the rest of the figures of the paper. T
 
 ## Data Description  
 
-To run these notebooks, download the [Hospital A (2013) dataset](https://arch.library.northwestern.edu/), or the [MIMIC (2001-12) dataset](https://physionet.org/content/mimiciii/1.4/). MIMIC-III is open access once you sign a Data Use Agreement and open an account at physionet.org.
+To run these notebooks, download the [Hospital A (2013) dataset](https://arch.library.northwestern.edu/), or the [MIMIC-III dataset](https://physionet.org/content/mimiciii/1.4/). MIMIC-III is open access once you sign a Data Use Agreement and open an account at physionet.org. You can also find the 100 labeled encounters subset of MIMIC-III at <https://arch.library.northwestern.edu/>.
 
 ### Directory Structure  
 
