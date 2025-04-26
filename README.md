@@ -2,7 +2,7 @@
 
 [![DOI](https://zenodo.org/badge/813937806.svg)](https://doi.org/10.5281/zenodo.15284390)
 
-This repository contains the Jupyter notebooks and Python modules for the paper "Open-source computational pipeline automatically flags instances of acute respiratory distress syndrome from electronic health records" by Morales et al. (2024). The paper is available at <https://doi.org/10.1101/2024.05.21.24307715>.  
+This repository contains the Jupyter notebooks and Python modules for the preprint "Open-source computational pipeline automatically flags instances of acute respiratory distress syndrome from electronic health records" by Morales et al. (2024). The preprint is available at <https://doi.org/10.1101/2024.05.21.24307715>.  
 
 If you use this work, please cite the paper.
 
