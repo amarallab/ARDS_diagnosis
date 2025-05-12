@@ -147,7 +147,7 @@ def _read_table(
 
     Args:
         table (str): Name of the table file, including its extension.
-        dataset (str, optional): Name of the hospital dataset, e.g., 'Northwestern Medicine'.
+        dataset (str, optional): Name of the hospital dataset, e.g., 'Hospital A'.
         subfolder (str, optional): Specific subfolder within the dataset folder.
         columns (list[str], optional): Names of important columns to load from the table.
 
@@ -266,7 +266,7 @@ def read_in_files() -> tuple[
         - If the particular table is located within a subfolder, the name of the subfolder
 
         - A list of the columns that are relevant. Specifically, you'd need columns detailing:
-            + Patient and/or hospitalization identifiers
+            + Patient and/or hospitalization identifiers.
             + Admission/discharge dates (if available in such table); also, ICU start/end dates, if available.
             + Date/datetime of the report or lab value.
             + The actual value or report of interest.
