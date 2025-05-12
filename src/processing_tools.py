@@ -2,7 +2,7 @@
 This module provides tools for processing and managing datasets related to ARDS diagnosis. 
 It includes functions for file I/O, table preprocessing, and datetime detection and conversion.
 
-Author(s): Félix L. Morales
+Author(s): Félix L. Morales, Thomas Stoeger
 """
 import os
 import json
