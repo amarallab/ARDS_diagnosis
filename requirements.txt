@@ -13,7 +13,7 @@ bleach==6.2.0
 boltons==24.0.0
 Brotli==1.1.0
 cached-property==1.5.2
-certifi==2025.1.31
+certifi==2025.4.26
 cffi==1.17.1
 charset-normalizer==3.4.1
 click==8.1.8
@@ -41,7 +41,7 @@ future==1.0.0
 h11==0.16.0
 h2==4.2.0
 hpack==4.1.0
-httpcore==1.0.7
+httpcore==1.0.9
 httpx==0.28.1
 hyperframe==6.1.0
 hyperopt==0.2.7
@@ -136,7 +136,7 @@ scikit-learn==1.6.1
 scipy==1.15.2
 seaborn==0.13.2
 Send2Trash==1.8.3
-setuptools==78.1.0
+setuptools==80.8.0
 shap==0.47.1
 shiboken6==6.9.0
 six==1.17.0
@@ -149,7 +149,7 @@ terminado==0.18.1
 threadpoolctl==3.6.0
 tinycss2==1.4.0
 tomli==2.2.1
-tornado==6.4.2
+tornado==6.5
 tqdm==4.67.1
 traitlets==5.14.3
 truststore==0.10.1
