@@ -126,7 +126,7 @@ PyYAML==6.0.2
 pyzmq==26.4.0
 referencing==0.36.2
 regex==2024.11.6
-requests==2.32.3
+requests>=2.32.4
 rfc3339_validator==0.1.4
 rfc3986-validator==0.1.1
 rpds-py==0.24.0
@@ -159,7 +159,7 @@ typing_utils==0.1.0
 tzdata==2025.2
 unicodedata2==16.0.0
 uri-template==1.3.0
-urllib3==2.4.0
+urllib3>=2.5.0
 wcwidth==0.2.13
 webcolors==24.11.1
 webencodings==0.5.1
