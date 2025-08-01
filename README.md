@@ -2,7 +2,7 @@
 
 [![DOI](https://zenodo.org/badge/813937806.svg)](https://doi.org/10.5281/zenodo.15284390)
 
-This repository contains the Jupyter notebooks and Python modules for the paper "Open-source computational pipeline flags instances of acute respiratory distress syndrome in mechanically ventilated adult patients" by Morales et al. (2025). The paper is freely-available at <a href="https://doi.org/10.1038/s41467-025-61418-5" target="_blank">Nature Communications</a>.
+This repository contains the Jupyter notebooks and Python modules for the paper "Open-source computational pipeline flags instances of acute respiratory distress syndrome in mechanically ventilated adult patients" by Morales et al. (2025). The paper is freely-available at [Nature Communications](https://doi.org/10.1038/s41467-025-61418-5).  
 
 If you use this work/repository, please cite the paper.
 
