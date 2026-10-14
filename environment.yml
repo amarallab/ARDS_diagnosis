@@ -44,7 +44,7 @@ dependencies:
   - scikit-learn
   - scipy
   - seaborn
-  - setuptools
+  - setuptools==80.8.0
   - shap
   - six
   - sqlite
@@ -60,4 +60,18 @@ dependencies:
   - xz
   - zeromq
   - zlib
+  - h11
+  - tableone
+  - pre-commit
+  - pytest
+  - jupyter_server
+  - anyio
+  - jupyterlab
+  - pillow
+  - mistune
+  - h2
+  - soupsieve
+  - brotli
+  - idna
+  - bleach
 prefix: C:\Users\felix\.conda\envs\ards
