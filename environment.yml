@@ -44,7 +44,7 @@ dependencies:
   - scikit-learn
   - scipy
   - seaborn
-  - setuptools==80.8.0
+  - setuptools==84.0.0
   - shap
   - six
   - sqlite
@@ -74,4 +74,6 @@ dependencies:
   - brotli
   - idna
   - bleach
+  - nbconvert
+  - fonttools
 prefix: C:\Users\felix\.conda\envs\ards

@@ -34,7 +34,7 @@ et_xmlfile==2.0.0
 exceptiongroup==1.2.2
 executing==2.1.0
 fastjsonschema==2.21.1
-fonttools==4.57.0
+fonttools>=4.66.1
 fqdn==1.5.1
 frozendict==2.4.6
 future==1.0.0
@@ -83,7 +83,7 @@ menuinst==2.2.0
 mistune>=3.3.4
 munkres==1.1.4
 nbclient==0.10.2
-nbconvert==7.16.6
+nbconvert>=7.17.2
 nbformat==5.10.4
 nest_asyncio==1.6.0
 networkx==3.4.2
@@ -136,7 +136,7 @@ scikit-learn==1.6.1
 scipy==1.15.2
 seaborn==0.13.2
 Send2Trash==1.8.3
-setuptools==80.8.0
+setuptools>=84.0.0
 shap==0.47.1
 shiboken6==6.9.0
 six==1.17.0
@@ -164,7 +164,7 @@ wcwidth==0.2.13
 webcolors==24.11.1
 webencodings==0.5.1
 websocket-client==1.8.0
-wheel==0.45.1
+wheel>=0.48.0
 widgetsnbextension==4.0.14
 win_inet_pton==1.1.0
 xgboost==3.0.0
